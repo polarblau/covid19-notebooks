@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 import pandas as pd
 
 from pandas.plotting import register_matplotlib_converters
@@ -70,7 +71,7 @@ def plot_cfr_for_region(data, region='Global', t=7):
     '''
     df = cfr_for_region(data, region, t)
     ax = df.plot()
-    ax.yaxis.set_major_formatter(mtick.PercentFormatter())
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(1))
     plt.axhline(y=df.mean(), color='r', linestyle='--')
       
   
@@ -108,5 +109,23 @@ def growth_factor_stats_for_region(data, region='Global'):
     '''
     df = growth_factor_for_region(data, region)
     out = [[df[-1], df.mean()]]
+    
+    return pd.DataFrame(out, columns=['Current', 'Mean'], index=[region])
+
+
+def cfr_stats_for_region(data, region='Global', t=7):
+    '''
+    Print stats current fatality rate for a given region.
+       
+    Parameters: 
+        data (dict): clean data set including all types and regions
+        region (str): region string, optional
+        t (int): time, optional
+    
+    Returns:
+        output (DataFrame): Pandas DataFrame, current and mean fatality rate
+    '''
+    df = cfr_for_region(data, region, t)
+    out = [['{:.2%}'.format(df[-1]), '{:.2%}'.format(df.mean())]]
     
     return pd.DataFrame(out, columns=['Current', 'Mean'], index=[region])
