@@ -1,4 +1,9 @@
 import pandas as pd
+import datetime
+import json
+
+from stats_helpers import (growth_factor_for_region, 
+                           cfr_for_region, lin_reg_for_time_series)
 
 
 SUPPORTED_DATA_TYPES = ['confirmed', 'deaths', 'recovered']
@@ -46,3 +51,42 @@ def clean_data(raw_df):
     df['Global'] = df.sum(axis=1)
     
     return df
+
+
+
+def export_stats(data):
+    return data
+
+def export_growth_factor(data):
+    return { k: growth_factor_for_region(data, k) for k in data['confirmed'] }
+    
+def export_cfr(data):
+    return { k: cfr_for_region(data, k, t=7) for k in data['confirmed'] }
+   
+def export_cfr_lin_reg(data):
+    out = {}
+    for region in data['confirmed']:
+        try:
+            cfr_df = cfr_for_region(data, region, t=7)
+            lr_df = lin_reg_for_time_series(cfr_df)
+            out[region] = lr_df[0] if lr_df is not None else None
+        except:
+            print('Failed to call "export_cfr_lin_reg()" for region "{}".'.format(region))
+    return out
+    
+def export_data(data):
+    ts = datetime.date.today().strftime('%Y%m%d')
+    
+    manifest = ['stats', 'growth_factor', 'cfr', 'cfr_lin_reg']
+    
+    for key in manifest:
+        filename = '{}_{}.json'.format(ts, key)
+        out = globals()['export_{}'.format(key)](data)
+        pd.Series(out).to_json(filename, orient='columns')
+        print('Exported {} [ {} ].'.format(key, filename))
+
+    
+    
+    
+    
+    

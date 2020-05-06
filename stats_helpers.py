@@ -41,7 +41,7 @@ def cfr_for_region(data, region='Global', t=7):
         time (int): time, optional
         
     Returns:
-        series (Series): Pandas Series for CFR
+        series (Series): Pandas Series for CFR or None
     '''
     c = data['confirmed'][region]
     d = data['deaths'][region]
@@ -62,6 +62,10 @@ def lin_reg_for_time_series(df):
         series (DataFrame): Pandas Series for prediction
     '''
     df = df[df.values > 0]
+    
+    if len(df.index) <= 0:
+        return None
+    
     labels, uniques = df.index.factorize()
 
     X = labels.reshape(-1,1)

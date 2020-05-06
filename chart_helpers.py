@@ -85,13 +85,16 @@ def plot_lin_reg_for_cfr_for_region(data, region='Global', t=7):
         region (str): region string, optional
         t (int): time, optional
     '''
-    cfr_df = cfr_for_region(data, region, t=7)
+    cfr_df = cfr_for_region(data, region, t)
     lf_df = lin_reg_for_time_series(cfr_df)
     
     fig, ax = plt.subplots()
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(1))
 
-    ax.plot(lf_df, color='red')
+    if lf_df is not None: 
+        ax.plot(lf_df, color='red')
+    else:
+        print('Could not calculate CFR Linear Regression for this region.')
     ax.plot(cfr_df, color='gray')
 
     fig.autofmt_xdate()
