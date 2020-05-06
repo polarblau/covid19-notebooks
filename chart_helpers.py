@@ -5,7 +5,7 @@ import pandas as pd
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
-from stats_helpers import growth_factor_for_region, cfr_for_region
+from stats_helpers import growth_factor_for_region, cfr_for_region, lin_reg_for_time_series
 
 
 def ax_plot_region_set(ax, data, region='Global'):
@@ -57,6 +57,7 @@ def plot_growth_factor_for_region(data, region='Global'):
     '''
     df = growth_factor_for_region(data, region)
     ax = df.plot()
+    plt.axhline(y=1, color='black', linestyle='-')
     plt.axhline(y=df.mean(), color='r', linestyle='--')
     
     
@@ -73,8 +74,29 @@ def plot_cfr_for_region(data, region='Global', t=7):
     ax = df.plot()
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(1))
     plt.axhline(y=df.mean(), color='r', linestyle='--')
-      
-  
+
+    
+def plot_lin_reg_for_cfr_for_region(data, region='Global', t=7):
+    '''
+    Plot linear regression for current fatality rate over time for region.
+       
+    Parameters: 
+        data (dict): clean data set including all types and regions
+        region (str): region string, optional
+        t (int): time, optional
+    '''
+    cfr_df = cfr_for_region(data, region, t=7)
+    lf_df = lin_reg_for_time_series(cfr_df)
+    
+    fig, ax = plt.subplots()
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(1))
+
+    ax.plot(lf_df, color='red')
+    ax.plot(cfr_df, color='gray')
+
+    fig.autofmt_xdate()
+    plt.show()
+
     
 def stats_for_region(data, region='Global'):
     '''

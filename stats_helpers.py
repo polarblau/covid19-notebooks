@@ -1,4 +1,7 @@
 import pandas as pd
+from sklearn.model_selection import train_test_split 
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics
 
 
 def growth_factor_for_region(data, region='Global'):
@@ -47,3 +50,23 @@ def cfr_for_region(data, region='Global', t=7):
     
     return pd.Series(raw, index=d[t:].index)
 
+
+def lin_reg_for_time_series(df):
+    '''
+    Calculate linear regression model for time series.
+       
+    Parameters: 
+        data (DataFrame): Time series data
+        
+    Returns:
+        series (DataFrame): Pandas Series for prediction
+    '''
+    df = df[df.values > 0]
+    labels, uniques = df.index.factorize()
+
+    X = labels.reshape(-1,1)
+    y = df.values.reshape(-1, 1)
+    
+    regressor = LinearRegression().fit(X, y)
+    
+    return pd.DataFrame(regressor.predict(X), index=uniques)
