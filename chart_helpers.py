@@ -7,6 +7,8 @@ register_matplotlib_converters()
 
 from stats_helpers import growth_factor_for_region, cfr_for_region, lin_reg_for_time_series
 
+plt.style.use('seaborn-darkgrid')
+
 
 def ax_plot_region_set(ax, data, region='Global'):
     '''
