@@ -1,6 +1,5 @@
 import pandas as pd
 import datetime
-import json
 
 from stats_helpers import (growth_factor_for_region, 
                            cfr_for_region, lin_reg_for_time_series)
@@ -68,8 +67,7 @@ def export_cfr_lin_reg(data):
     for region in data['confirmed']:
         try:
             cfr_df = cfr_for_region(data, region, t=7)
-            lr_df = lin_reg_for_time_series(cfr_df)
-            out[region] = lr_df[0] if lr_df is not None else None
+            out[region] = lin_reg_for_time_series(cfr_df)
         except:
             print('Failed to call "export_cfr_lin_reg()" for region "{}".'.format(region))
     return out

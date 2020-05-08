@@ -73,4 +73,21 @@ def lin_reg_for_time_series(df):
     
     regressor = LinearRegression().fit(X, y)
     
-    return pd.DataFrame(regressor.predict(X), index=uniques)
+    return pd.DataFrame(regressor.predict(X), index=uniques)[0]
+
+
+def new_cases_per_region(data, region='Global'):
+    '''
+    Calculate new cases count per region.
+       
+    Parameters: 
+        data (DataFrame): Time series data
+        region (str): region string, optional
+        
+    Returns:
+        series (DataFrame): Pandas Series
+    '''
+    df = data['confirmed'][region].rolling(2).apply(lambda x: x[1] - x[0], raw=True)
+    df = df.fillna(0.0)
+    
+    return df
